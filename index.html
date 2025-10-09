@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Resume & Cover Letter Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="resume_builder.css"> 
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <i class="fas fa-file-alt app-icon"></i>
+        <span class="app-name">Resume & Cover Letter Builder</span>
+        <span style="opacity: 0.8; font-size: 12px;" id="documentTitle"></span>
+    </div>
+
+    <!-- Ribbon Container -->
+    <div class="ribbon-container">
+        <!-- Ribbon Tabs -->
+        <div class="ribbon-tabs">
+            <button class="ribbon-tab active" onclick="switchRibbonTab('file')">File</button>
+            <button class="ribbon-tab" onclick="switchRibbonTab('home')">Home</button>
+            <button class="ribbon-tab" onclick="switchRibbonTab('design')">Design</button>
+            <button class="ribbon-tab" onclick="switchRibbonTab('layout')">Layout</button>
+            <button class="ribbon-tab" onclick="switchRibbonTab('insert')">Insert</button>
+        </div>
+
+        <!-- File Tab -->
+        <div class="ribbon-content active" data-tab="file">
+            <div class="ribbon-groups">
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="loadData()" title="Load saved resume data from JSON file">
+                            <i class="fas fa-folder-open"></i>
+                            <span>Load Data</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="saveData()" title="Save resume data as JSON file">
+                            <i class="fas fa-save"></i>
+                            <span>Save Data</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">File Operations</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="printDocument()">
+                            <i class="fas fa-print"></i>
+                            <span>Print</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="downloadPDF()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>Export PDF</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Export</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="switchDocument('resume')">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Resume</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="switchDocument('cover')">
+                            <i class="fas fa-envelope"></i>
+                            <span>Cover Letter</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Document Type</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="clearAll()" style="border-color: #dc3545;">
+                            <i class="fas fa-trash" style="color: #dc3545;"></i>
+                            <span style="color: #dc3545;">Clear All</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Actions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Tab -->
+        <div class="ribbon-content" data-tab="home">
+            <div class="ribbon-groups">
+
+                <!-- History Group -->
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" id="undoBtn" onclick="HistoryManager.undo()" title="Undo (Ctrl+Z)">
+                            <i class="fas fa-undo"></i>
+                            <span>Undo</span>
+                        </button>
+                        <button class="ribbon-btn" id="redoBtn" onclick="HistoryManager.redo()" title="Redo (Ctrl+Y)">
+                            <i class="fas fa-redo"></i>
+                            <span>Redo</span>
+                        </button>
+                        <button class="ribbon-btn small" onclick="HistoryViewer.show()" title="View edit history">
+                            <i class="fas fa-history"></i>
+                            <span>History</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">
+                        History
+                        <span id="historyInfo" style="font-size: 9px; opacity: 0.7; margin-left: 4px;"></span>
+                    </div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <div class="inline-control">
+                            <label>Font</label>
+                            <select id="fontFamily" onchange="updatePreview()">
+                                <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Courier New', monospace">Courier New</option>
+                            </select>
+                        </div>
+                        <div class="inline-control">
+                            <label>Size</label>
+                            <input type="number" id="fontSize" value="11" min="8" max="16" onchange="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="ribbon-group-title">Font</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <div class="inline-control">
+                            <label>Bullet Style</label>
+                            <select id="bulletStyle" onchange="updatePreview()">
+                                <option value="•">• Bullet</option>
+                                <option value="■">■ Square</option>
+                                <option value="►">► Arrow</option>
+                                <option value="✓">✓ Check</option>
+                                <option value="→">→ Right Arrow</option>
+                                <option value="-">- Dash</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="ribbon-group-title">Bullets</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Tab -->
+        <div class="ribbon-content" data-tab="design">
+            <div class="ribbon-groups">
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <div class="inline-control">
+                            <label>Main Color</label>
+                            <input type="color" id="mainColor" value="#008c8c" onchange="updatePreview()">
+                        </div>
+                        <div class="inline-control">
+                            <label>Gradient</label>
+                            <input type="color" id="gradientColor" value="#8c8c00" onchange="updatePreview()">
+                        </div>
+                        <div class="inline-control">
+                            <label>Right BG</label>
+                            <input type="color" id="rightBgColor" value="#e6ebf0" onchange="updatePreview()">
+                        </div>
+                        <div class="inline-control">
+                            <label>Content</label>
+                            <input type="color" id="rightContentColor" value="#ffffff" onchange="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="ribbon-group-title">Colors</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="useGradient" checked onchange="updatePreview()">
+                            Use Gradient
+                        </label>
+                    </div>
+                    <div class="ribbon-group-title">Effects</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Tab -->
+        <div class="ribbon-content" data-tab="layout">
+            <div class="ribbon-groups">
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <div class="inline-control">
+                            <label>Left %</label>
+                            <input type="number" id="leftWidth" value="35" min="20" max="60" onchange="updatePreview()">
+                        </div>
+                        <div class="inline-control">
+                            <label>Right %</label>
+                            <input type="number" id="rightWidth" value="65" min="40" max="80" onchange="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="ribbon-group-title">Columns</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="ResumeManager.flipColumns()">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Flip</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="ResumeManager.resetSectionPositions()">
+                            <i class="fas fa-undo"></i>
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Arrange</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <div class="inline-control">
+                            <label>Header</label>
+                            <input type="number" id="rightHeaderPadding" value="15" min="0" max="50" onchange="updatePreview()">
+                        </div>
+                        <div class="inline-control">
+                            <label>Body</label>
+                            <input type="number" id="rightBodyPadding" value="17" min="0" max="50" onchange="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="ribbon-group-title">Spacing</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn small" onclick="ResumeManager.toggleColumnVisibility('left')">
+                            <i class="fas fa-eye-slash"></i>
+                            <span>Hide Left</span>
+                        </button>
+                        <button class="ribbon-btn small" onclick="ResumeManager.toggleColumnVisibility('right')">
+                            <i class="fas fa-eye-slash"></i>
+                            <span>Hide Right</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Visibility</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insert Tab -->
+        <div class="ribbon-content" data-tab="insert">
+            <div class="ribbon-groups">
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="switchToCoverLetter()">
+                            <i class="fas fa-envelope"></i>
+                            <span>Cover Letter</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('personal')">
+                            <i class="fas fa-user"></i>
+                            <span>Personal</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('about')">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('experience')">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Experience</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('education')">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Education</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Main Sections</div>
+                </div>
+
+                <div class="ribbon-group">
+                    <div class="ribbon-group-content">
+                        <button class="ribbon-btn" onclick="openFormPanel('skills')">
+                            <i class="fas fa-tools"></i>
+                            <span>Skills</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('languages')">
+                            <i class="fas fa-language"></i>
+                            <span>Languages</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('custom')">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Custom</span>
+                        </button>
+                        <button class="ribbon-btn" onclick="openFormPanel('references')">
+                            <i class="fas fa-users"></i>
+                            <span>References</span>
+                        </button>
+                    </div>
+                    <div class="ribbon-group-title">Additional</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <!-- Resume Sections -->
+            <div class="sidebar-section" id="resumeSections">
+                <h3><i class="fas fa-list"></i> Resume Sections</h3>
+                <div class="sidebar-item active" onclick="openFormPanel('personal')">
+                    <i class="fas fa-user"></i>
+                    <span>Personal Info</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('about')">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About Me</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('experience')">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Experience</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('education')">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Education</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('skills')">
+                    <i class="fas fa-tools"></i>
+                    <span>Skills</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('languages')">
+                    <i class="fas fa-language"></i>
+                    <span>Languages</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('custom')">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Custom Sections</span>
+                </div>
+                <div class="sidebar-item" onclick="openFormPanel('references')">
+                    <i class="fas fa-users"></i>
+                    <span>References</span>
+                </div>
+            </div>
+
+            <!-- Cover Letter Section -->
+            <div class="sidebar-section" id="coverLetterSections" style="display: none;">
+                <h3><i class="fas fa-envelope"></i> Cover Letter</h3>
+                <div class="sidebar-item active" onclick="openFormPanel('coverLetter')">
+                    <i class="fas fa-edit"></i>
+                    <span>Create Cover Letter</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Area -->
+        <div class="preview-area">
+            <!-- Resume Preview -->
+            <div class="resume-preview" id="resumePreview">
+                <div class="left-column" id="leftColumn">
+                    <div class="profile-pic" id="previewProfilePic">👤</div>
+                    <div id="leftColumnContent"></div>
+                </div>
+
+                <div class="right-column" id="rightColumn">
+                    <div class="right-header">
+                        <div class="name" id="previewFirstName"></div>
+                        <div class="lastname" id="previewLastName"></div>
+                        <div class="title" id="previewJobTitle"></div>
+                    </div>
+
+                    <div class="right-body" id="rightColumnContent"></div>
+                </div>
+            </div>
+            
+            <!-- Cover Letter Preview -->
+            <div id="coverLetterPreview" class="cover-letter-preview">
+                <div class="cl-top-strip" id="clTopStrip">
+                    <div class="cl-name-title">
+                        <div class="cl-name" id="clNameDisplay"></div>
+                        <div class="cl-title" id="clTitleDisplay"></div>
+                    </div>
+                </div>
+
+                <div class="cl-content">
+                    <div class="cl-date" id="clDateDisplay"></div>
+                    <div class="cl-recipient" id="clRecipientDisplay"></div>
+                    <div class="cl-salutation" id="clSalutationDisplay"></div>
+                    <div class="cl-body" id="clBodyDisplay"></div>
+                    <div class="cl-closing" id="clClosingDisplay"></div>
+                </div>
+
+                <div class="cl-bottom-strip" id="clBottomStrip">
+                    <div id="clBottomAddress" class="cl-contact-line"></div>
+                    <div id="clBottomPhone" class="cl-contact-line"></div>
+                    <div id="clBottomEmail" class="cl-contact-line"></div>
+                    <div id="clBottomLinkedIn" class="cl-contact-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Panel (Slide-in) -->
+    <div class="form-panel" id="formPanel">
+        <div class="form-panel-header">
+            <h3 id="formPanelTitle">Edit Section</h3>
+            <button class="form-panel-close" onclick="closeFormPanel()">×</button>
+        </div>
+        <div class="form-panel-content" id="formPanelContent">
+            <!-- Dynamic content loaded here -->
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-item">
+            <i class="fas fa-file-alt"></i>
+            <span id="statusDocType">Resume</span>
+        </div>
+        <div class="status-item">
+            <i class="fas fa-save"></i>
+            <span id="statusSave">Auto-saved</span>
+        </div>
+        <div class="status-item">
+            <span>Page 1 of 1</span>
+        </div>
+    </div>
+
+    <script src="resume_builder.js"></script>
+</body>
+</html>
