@@ -485,14 +485,15 @@ body {
 }
 
 .skill-category {
-    font-weight: bold;
+    font-weight: Normal;
     margin-bottom: 5px;
     font-size: calc(var(--font-size, 11px));
 }
 
 .skill-list {
+    font-weight: italic;
     line-height: 1.5;
-    font-size: calc(var(--font-size, 11px) - 1px);
+    font-size: calc(var(--font-size, 11px));
 }
 
 .left-column .skill-category {
@@ -1528,3 +1529,4 @@ ul.custom-bullets li::before {
 .right-column .custom-sections .section-title {
     margin-top: 20px;
 }
+
