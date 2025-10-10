@@ -491,7 +491,7 @@ body {
 }
 
 .skill-list {
-    font-weight: italic;
+    font-style: italic;
     line-height: 1.5;
     font-size: calc(var(--font-size, 11px));
 }
@@ -1529,4 +1529,5 @@ ul.custom-bullets li::before {
 .right-column .custom-sections .section-title {
     margin-top: 20px;
 }
+
 
