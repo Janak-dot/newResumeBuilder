@@ -486,8 +486,9 @@ body {
 
 .skill-category {
     font-weight: Normal;
-    margin-bottom: 1px;
+    margin-bottom: 0px;
     font-size: calc(var(--font-size, 11px)+1px);
+    line-height: 1.0;
 }
 
 .skill-list {
@@ -1529,6 +1530,7 @@ ul.custom-bullets li::before {
 .right-column .custom-sections .section-title {
     margin-top: 20px;
 }
+
 
 
 
