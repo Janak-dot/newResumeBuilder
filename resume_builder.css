@@ -468,7 +468,7 @@ body {
     margin-top: 10px;
     margin-bottom: 15px;
     line-height: 1.5;
-    text-align: justify;
+    text-align: left;
 }
 
 .left-column .section-text {
@@ -1529,6 +1529,7 @@ ul.custom-bullets li::before {
 .right-column .custom-sections .section-title {
     margin-top: 20px;
 }
+
 
 
 
