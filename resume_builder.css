@@ -486,13 +486,13 @@ body {
 
 .skill-category {
     font-weight: Normal;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     font-size: calc(var(--font-size, 11px)+1px);
 }
 
 .skill-list {
     font-style: italic;
-    line-height: 1.5;
+    line-height: 1.1;
     font-size: calc(var(--font-size, 11px));
 }
 
@@ -1529,6 +1529,7 @@ ul.custom-bullets li::before {
 .right-column .custom-sections .section-title {
     margin-top: 20px;
 }
+
 
 
 
