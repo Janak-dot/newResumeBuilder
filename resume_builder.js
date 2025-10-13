@@ -1620,7 +1620,7 @@ function generateSingleCustomHTML(section, bullet, position = {}) {
         const description = (item.description || '').trim();
         const lines = description.length ? description.split('\n').map(l => l.trim()).filter(l => l.length > 0) : [];
 
-        let subtitle = rawSubtitle;
+        let subtitle = rawSubtitle || '';
         let bulletLines = lines.slice();
         
         //if (!subtitle && bulletLines.length > 0) {
@@ -2679,6 +2679,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
