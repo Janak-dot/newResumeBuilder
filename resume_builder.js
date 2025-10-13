@@ -1623,13 +1623,13 @@ function generateSingleCustomHTML(section, bullet, position = {}) {
         let subtitle = rawSubtitle;
         let bulletLines = lines.slice();
         
-        if (!subtitle && bulletLines.length > 0) {
-            if (bulletLines.length > 1) {
-                subtitle = bulletLines.shift();
-            } else {
-                subtitle = bulletLines.shift();
-                bulletLines = [];
-            }
+        //if (!subtitle && bulletLines.length > 0) {
+          //  if (bulletLines.length > 1) {
+            //    subtitle = bulletLines.shift();
+            //} else {
+              //  subtitle = bulletLines.shift();
+               // bulletLines = [];
+            // }
         }
 
         const bulletsHTML = bulletLines.length
@@ -2679,4 +2679,5 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
