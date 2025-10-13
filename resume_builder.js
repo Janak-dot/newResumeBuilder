@@ -1630,7 +1630,7 @@ function generateSingleCustomHTML(section, bullet, position = {}) {
               //  subtitle = bulletLines.shift();
                // bulletLines = [];
             // }
-        }
+        //}
 
         const bulletsHTML = bulletLines.length
             ? `<ul class="custom-bullets" style="--bullet: '${bullet || "•"}';">
@@ -2679,5 +2679,6 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
