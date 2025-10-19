@@ -843,12 +843,15 @@ function addEducation() {
         degree: '', 
         location: '', 
         startDate: '', 
-        endDate: '', 
+        endDate: '',
+        specialization: '',
+        coursework: '',
+        thesis: '',
+        thesisLink: '',
         order: education.length 
     });
     renderEducation();
 }
-
 function removeEducation(id) {
     education = education.filter(e => e.id !== id);
     renderEducation();
@@ -891,41 +894,64 @@ function renderEducation() {
             <div class="form-row">
                 <div class="form-group">
                     <label>School/University:</label>
-                    <input type="text" value="${edu.school}" 
+                    <input type="text" value="${edu.school || ''}" 
                         placeholder="e.g., LUT University"
                         onchange="education.find(e=>e.id===${edu.id}).school=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
                 <div class="form-group">
                     <label>Location:</label>
-                    <input type="text" value="${edu.location}" 
-                        placeholder="e.g., Finland"
+                    <input type="text" value="${edu.location || ''}" 
+                        placeholder="e.g., Lappeenranta, Finland"
                         onchange="education.find(e=>e.id===${edu.id}).location=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
             </div>
             <div class="form-group">
                 <label>Degree:</label>
-                <input type="text" value="${edu.degree}" 
-                    placeholder="e.g., M.Sc. in Mechanical Engineering"
+                <input type="text" value="${edu.degree || ''}" 
+                    placeholder="e.g., M.Sc. (Tech) in Mechanical Engineering"
                     onchange="education.find(e=>e.id===${edu.id}).degree=this.value; updatePreview(); saveToLocalStorage();">
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Start Date:</label>
-                    <input type="text" value="${edu.startDate}" 
-                        placeholder="e.g., Sep. 2023"
+                    <input type="text" value="${edu.startDate || ''}" 
+                        placeholder="e.g., Sep 2023"
                         onchange="education.find(e=>e.id===${edu.id}).startDate=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
                 <div class="form-group">
                     <label>End Date:</label>
-                    <input type="text" value="${edu.endDate}" 
-                        placeholder="e.g., Jun. 2025"
+                    <input type="text" value="${edu.endDate || ''}" 
+                        placeholder="e.g., Jun 2025"
                         onchange="education.find(e=>e.id===${edu.id}).endDate=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
+            </div>
+            <div class="form-group">
+                <label>Specialization:</label>
+                <input type="text" value="${edu.specialization || ''}" 
+                    placeholder="e.g., Steel Structures | Welding & Laser Technology"
+                    onchange="education.find(e=>e.id===${edu.id}).specialization=this.value; updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Relevant Coursework (use • to separate):</label>
+                <textarea 
+                    placeholder="e.g., Steel Structure Design • Structural Joints • Welding Metallurgy"
+                    onchange="education.find(e=>e.id===${edu.id}).coursework=this.value; updatePreview(); saveToLocalStorage();">${edu.coursework || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Thesis Title:</label>
+                <input type="text" value="${edu.thesis || ''}" 
+                    placeholder="e.g., Mechanical performance and fracture behaviour of dissimilar welds..."
+                    onchange="education.find(e=>e.id===${edu.id}).thesis=this.value; updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Thesis Link (optional):</label>
+                <input type="text" value="${edu.thesisLink || ''}" 
+                    placeholder="e.g., https://lutpub.lut.fi/handle/10024/17004"
+                    onchange="education.find(e=>e.id===${edu.id}).thesisLink=this.value; updatePreview(); saveToLocalStorage();">
             </div>
         </div>
     `).join('');
 }
-
 function addCustomSection() {
     const newSection = { 
         id: Date.now(), 
@@ -1873,20 +1899,46 @@ function generateEducationHTML() {
 
     const content = education.map(edu => {
         if (!edu.school && !edu.degree) return '';
+        
+        const specialization = (edu.specialization || '').trim();
+        const coursework = (edu.coursework || '').trim();
+        const thesis = (edu.thesis || '').trim();
+        const thesisLink = (edu.thesisLink || '').trim();
+        
+        // Build optional sections only if content exists
+        let additionalContent = '';
+        
+        if (specialization) {
+            additionalContent += `<div style="margin-top: 4px; font-style: italic; font-size: calc(var(--font-size, 11px) - 0.5px);"><strong>Specialization:</strong> ${specialization}</div>`;
+        }
+        
+        if (coursework) {
+            additionalContent += `<div style="margin-top: 4px; font-size: calc(var(--font-size, 11px) - 0.5px);"><strong>Relevant Coursework:</strong> ${coursework}</div>`;
+        }
+        
+        if (thesis) {
+            let thesisHTML = `<div style="margin-top: 4px; font-size: calc(var(--font-size, 11px) - 0.5px);"><strong>Master's Thesis:</strong> <em>"${thesis}"</em>`;
+            if (thesisLink) {
+                thesisHTML += ` <a href="${thesisLink}" target="_blank" style="color: var(--main-color, #008c8c); text-decoration: none;">🔗 View Thesis</a>`;
+            }
+            thesisHTML += `</div>`;
+            additionalContent += thesisHTML;
+        }
+        
         return `
             <div class="education-item">
                 <div class="education-header">
                     <span class="education-degree">${edu.degree || ''}</span>
-                    <span class="education-dates">${edu.startDate}${edu.endDate ? ' - ' + edu.endDate : ''}</span>
+                    <span class="education-dates">${edu.startDate || ''}${edu.endDate ? ' - ' + edu.endDate : ''}</span>
                 </div>
-                <div class="education-school">${edu.school}${edu.location ? ', ' + edu.location : ''}</div>
+                <div class="education-school">${edu.school || ''}${edu.location ? ', ' + edu.location : ''}</div>
+                ${additionalContent}
             </div>
         `;
     }).join('');
 
     return content ? `<div class="section-title">${heading}</div><div>${content}</div>` : '';
 }
-
 function generateReferencesHTML() {
     if (references.length === 0) return '';
     
@@ -2679,6 +2731,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
