@@ -1917,9 +1917,9 @@ function generateEducationHTML() {
         }
         
         if (thesis) {
-            let thesisHTML = `<div style="margin-top: 4px; font-size: calc(var(--font-size, 11px) - 0.5px);"><strong>Master's Thesis:</strong> <em>"${thesis}"</em>`;
+            let thesisHTML = `<div style="margin-top: 4px; font-size: calc(var(--font-size, 11px) - 0.5px);"><strong>Thesis:</strong> <em>"${thesis}"</em>`;
             if (thesisLink) {
-                thesisHTML += ` <a href="${thesisLink}" target="_blank" style="color: var(--main-color, #008c8c); text-decoration: none;">🔗 View Thesis</a>`;
+                thesisHTML += ` <a href="${thesisLink}" target="_blank" style="color: var(--main-color, #008c8c); text-decoration: none;">🔗 View</a>`;
             }
             thesisHTML += `</div>`;
             additionalContent += thesisHTML;
@@ -2731,6 +2731,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
