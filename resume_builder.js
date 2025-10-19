@@ -895,58 +895,58 @@ function renderEducation() {
                 <div class="form-group">
                     <label>School/University:</label>
                     <input type="text" value="${edu.school || ''}" 
-                        placeholder="e.g., LUT University"
+                        placeholder="e.g., Aalto University"
                         onchange="education.find(e=>e.id===${edu.id}).school=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
                 <div class="form-group">
                     <label>Location:</label>
                     <input type="text" value="${edu.location || ''}" 
-                        placeholder="e.g., Lappeenranta, Finland"
+                        placeholder="e.g., Espoo, Finland"
                         onchange="education.find(e=>e.id===${edu.id}).location=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
             </div>
             <div class="form-group">
                 <label>Degree:</label>
                 <input type="text" value="${edu.degree || ''}" 
-                    placeholder="e.g., M.Sc. (Tech) in Mechanical Engineering"
+                    placeholder="e.g., B.Eng. in Industrial Engineering"
                     onchange="education.find(e=>e.id===${edu.id}).degree=this.value; updatePreview(); saveToLocalStorage();">
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Start Date:</label>
                     <input type="text" value="${edu.startDate || ''}" 
-                        placeholder="e.g., Sep 2023"
+                        placeholder="e.g., Aug 2019"
                         onchange="education.find(e=>e.id===${edu.id}).startDate=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
                 <div class="form-group">
                     <label>End Date:</label>
                     <input type="text" value="${edu.endDate || ''}" 
-                        placeholder="e.g., Jun 2025"
+                        placeholder="e.g., May 2023"
                         onchange="education.find(e=>e.id===${edu.id}).endDate=this.value; updatePreview(); saveToLocalStorage();">
                 </div>
             </div>
             <div class="form-group">
                 <label>Specialization:</label>
                 <input type="text" value="${edu.specialization || ''}" 
-                    placeholder="e.g., Steel Structures | Welding & Laser Technology"
+                    placeholder="e.g., Automation and Manufacturing Systems"
                     onchange="education.find(e=>e.id===${edu.id}).specialization=this.value; updatePreview(); saveToLocalStorage();">
             </div>
             <div class="form-group">
                 <label>Relevant Coursework (use • to separate):</label>
                 <textarea 
-                    placeholder="e.g., Steel Structure Design • Structural Joints • Welding Metallurgy"
+                    placeholder="e.g., Manufacturing Processes • Control Systems • Product Design"
                     onchange="education.find(e=>e.id===${edu.id}).coursework=this.value; updatePreview(); saveToLocalStorage();">${edu.coursework || ''}</textarea>
             </div>
             <div class="form-group">
                 <label>Thesis Title:</label>
                 <input type="text" value="${edu.thesis || ''}" 
-                    placeholder="e.g., Mechanical performance and fracture behaviour of dissimilar welds..."
+                    placeholder="e.g., Analysis of fatigue strength in welded steel structures"
                     onchange="education.find(e=>e.id===${edu.id}).thesis=this.value; updatePreview(); saveToLocalStorage();">
             </div>
             <div class="form-group">
                 <label>Thesis Link (optional):</label>
                 <input type="text" value="${edu.thesisLink || ''}" 
-                    placeholder="e.g., https://lutpub.lut.fi/handle/10024/17004"
+                    placeholder="e.g., https://exampleuniversity.edu/thesis/12345"
                     onchange="education.find(e=>e.id===${edu.id}).thesisLink=this.value; updatePreview(); saveToLocalStorage();">
             </div>
         </div>
@@ -2731,6 +2731,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
