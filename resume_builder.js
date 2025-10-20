@@ -1596,15 +1596,11 @@ function updatePreview() {
     let rightHeaderContact = '';
 
     // Process left column
-    sectionOrder.left.forEach((key, index) => {
-        if (sections[key]) {
-            if (key === 'contact' && index === 0) {
-                // Skip, handled separately
-            } else {
-                leftContent += sections[key];
-            }
-        }
-    });
+   sectionOrder.left.forEach((key, index) => {
+       if (sections[key]) {
+           leftContent += sections[key];
+       }
+   });
 
     // Process right column
     sectionOrder.right.forEach((key, index) => {
@@ -2731,6 +2727,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
