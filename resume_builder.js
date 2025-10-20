@@ -36,6 +36,8 @@ let formData = {
     email: '',
     linkedin: '',
     location: '',
+    dob: '',              
+    nationality: '',      
     summary: '',
     aboutType: 'summary',
     contactHeading: 'CONTACT',
@@ -437,56 +439,67 @@ function getFormContent(section) {
             `;
             
         case 'personal':
-            return `
-                <div class="form-group">
-                    <label>Profile Picture:</label>
-                    <input type="file" id="profilePic" accept="image/*" onchange="loadProfilePic()">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>First & Middle Name:</label>
-                        <input type="text" id="firstName" placeholder="John" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                    <div class="form-group">
-                        <label>Last Name:</label>
-                        <input type="text" id="lastName" placeholder="Doe" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Job Title:</label>
-                    <input type="text" id="jobTitle" placeholder="Software Engineer" onchange="updatePreview(); saveToLocalStorage();">
-                </div>
-                <h4 style="margin: 20px 0 10px; color: #2b579a;">Contact Information</h4>
-                
-                ${generateHeadingSelector('contact', formData.contactHeading)}
-                
-                <div class="placement-control">
-                    <button id="contactToggle" class="toggle-btn" onclick="ResumeManager.toggleSectionPlacement('contact')" title="Move left/right">⇄</button>
-                    <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'up')" title="Move up">↑</button>
-                    <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'down')" title="Move down">↓</button>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Phone:</label>
-                        <input type="tel" id="phone" placeholder="+1 234 567 8900" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                    <div class="form-group">
-                        <label>Email:</label>
-                        <input type="email" id="email" placeholder="john@example.com" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>LinkedIn:</label>
-                        <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                    <div class="form-group">
-                        <label>Location:</label>
-                        <input type="text" id="location" placeholder="New York, USA" onchange="updatePreview(); saveToLocalStorage();">
-                    </div>
-                </div>
-            `;
-
+    return `
+        <div class="form-group">
+            <label>Profile Picture:</label>
+            <input type="file" id="profilePic" accept="image/*" onchange="loadProfilePic()">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>First & Middle Name:</label>
+                <input type="text" id="firstName" placeholder="John" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" id="lastName" placeholder="Doe" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Job Title:</label>
+            <input type="text" id="jobTitle" placeholder="Software Engineer" onchange="updatePreview(); saveToLocalStorage();">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Date of Birth:</label>
+                <input type="text" id="dob" placeholder="e.g., 15 March 1990" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Nationality:</label>
+                <input type="text" id="nationality" placeholder="e.g., Finnish" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+        </div>
+        
+        <h4 style="margin: 20px 0 10px; color: #2b579a;">Contact Information</h4>
+        
+        ${generateHeadingSelector('contact', formData.contactHeading)}
+        
+        <div class="placement-control">
+            <button id="contactToggle" class="toggle-btn" onclick="ResumeManager.toggleSectionPlacement('contact')" title="Move left/right">⇄</button>
+            <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'up')" title="Move up">↑</button>
+            <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'down')" title="Move down">↓</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Phone:</label>
+                <input type="tel" id="phone" placeholder="+1 234 567 8900" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="email" placeholder="john@example.com" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>LinkedIn:</label>
+                <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="location" placeholder="New York, USA" onchange="updatePreview(); saveToLocalStorage();">
+            </div>
+        </div>
+    `;
         case 'about':
             return `
                 <div class="form-group">
@@ -1565,7 +1578,32 @@ function updatePreview() {
             picDiv.textContent = initials || '👤';
         }
     }
-
+   
+    // ✅Show DOB/Nationality below profile pic when contact is in right column
+      const isContactInRight = sectionOrder.right.includes('contact');
+      const dob = formData.dob;
+      const nationality = formData.nationality;
+      
+      let dobNationalityDiv = document.getElementById('dobNationalityDisplay');
+      if (!dobNationalityDiv && picDiv) {
+          dobNationalityDiv = document.createElement('div');
+          dobNationalityDiv.id = 'dobNationalityDisplay';
+          picDiv.parentNode.insertBefore(dobNationalityDiv, picDiv.nextSibling);
+      }
+      
+      if (dobNationalityDiv) {
+          if (isContactInRight && (dob || nationality)) {
+              dobNationalityDiv.innerHTML = `
+                  <div style="text-align: center; margin: 15px 0; font-size: calc(var(--font-size, 11px)); 
+                              color: rgba(255,255,255,0.9); line-height: 1.4;">
+                      ${dob && nationality ? `${dob} | ${nationality}` : (dob || nationality)}
+                  </div>
+              `;
+              dobNationalityDiv.style.display = 'block';
+          } else {
+              dobNationalityDiv.style.display = 'none';
+          }
+      }
     if (typeof updateDocumentTitle === "function") updateDocumentTitle();
 
     // Build sections object
@@ -1728,25 +1766,17 @@ function generateContactHTML() {
     const email = formData.email;
     const linkedin = formData.linkedin;
     const location = formData.location;
+    const dob = formData.dob;
+    const nationality = formData.nationality;
     const heading = formData.contactHeading || 'CONTACT';
                     
-    if (!phone && !email && !linkedin && !location) return '';
+    if (!phone && !email && !linkedin && !location && !dob && !nationality) return '';
     
     const isInRightColumn = sectionOrder.right.includes('contact');
     const isFirstInRight = isInRightColumn && sectionOrder.right[0] === 'contact';
     
-    if (isFirstInRight) {
-        return `
-            <div style="margin-top: 8px; font-size: 12px; line-height: 1.4;">
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
-                    ${phone ? `<span><i class="fas fa-phone"></i> ${phone}</span>` : ''}
-                    ${email ? `<span><i class="fas fa-envelope"></i> ${email}</span>` : ''}
-                    ${location ? `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>` : ''}
-                </div>
-                ${linkedin ? `<div><i class="fab fa-linkedin"></i> ${linkedin}</div>` : ''}
-            </div>
-        `;
-    } else {
+    // ✅ When in left column - show as regular section
+    if (!isInRightColumn) {
         return `
             <div class="section-title">${heading}</div>
             <div>
@@ -1757,8 +1787,38 @@ function generateContactHTML() {
             </div>
         `;
     }
+    
+    // ✅ When first in right column - show in header with DOB and Nationality in second row
+    if (isFirstInRight) {
+        return `
+            <div style="margin-top: 8px; font-size: 12px; line-height: 1.4;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
+                    ${phone ? `<span><i class="fas fa-phone"></i> ${phone}</span>` : ''}
+                    ${email ? `<span><i class="fas fa-envelope"></i> ${email}</span>` : ''}
+                    ${location ? `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>` : ''}
+                </div>
+                ${(dob || nationality) ? `
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
+                    ${dob ? `<span><i class="fas fa-birthday-cake"></i> ${dob}</span>` : ''}
+                    ${nationality ? `<span><i class="fas fa-flag"></i> ${nationality}</span>` : ''}
+                    ${linkedin ? `<span><i class="fab fa-linkedin"></i> ${linkedin}</span>` : ''}
+                </div>
+                ` : (linkedin ? `<div><i class="fab fa-linkedin"></i> ${linkedin}</div>` : '')}
+            </div>
+        `;
+    } 
+    
+    // ✅ When in right column but NOT first - show as regular section in content box
+    return `
+        <div class="section-title">${heading}</div>
+        <div>
+            ${phone ? `<div class="contact-item"><i class="fas fa-phone"></i> ${phone}</div>` : ''}
+            ${email ? `<div class="contact-item"><i class="fas fa-envelope"></i> ${email}</div>` : ''}
+            ${linkedin ? `<div class="contact-item"><i class="fab fa-linkedin"></i> ${linkedin}</div>` : ''}
+            ${location ? `<div class="contact-item"><i class="fas fa-map-marker-alt"></i> ${location}</div>` : ''}
+        </div>
+    `;
 }
-
 function generateSummaryHTML() {
     const summary = formData.summary;
     const aboutType = formData.aboutType;
@@ -2727,6 +2787,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
