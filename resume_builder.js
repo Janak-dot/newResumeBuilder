@@ -258,7 +258,7 @@ function loadFromLocalStorage() {
         try {
             const data = JSON.parse(stored);
             restoreAllData(data);
-            cleanupSectionOrder(); // ✅ ADD THIS LINE
+            cleanupSectionOrder(); // 
             console.log('✅ Loaded from localStorage');
             return true;
         } catch (e) {
@@ -378,7 +378,7 @@ function openFormPanel(section) {
     if (section === 'experience') renderExperiences();
     if (section === 'education') renderEducation();
     if (section === 'custom') {
-    // ✅ FIX: Delay rendering until DOM is ready
+    // Delay rendering until DOM is ready
     setTimeout(() => renderCustomSections(),50 );
 }
     if (section === 'references') renderReferences();
@@ -1580,7 +1580,7 @@ function updatePreview() {
     }
    
     // ✅Show DOB/Nationality below profile pic when contact is in right column
-      const isContactInRight = sectionOrder.right.includes('contact');
+      const isContactInLeft = sectionOrder.left.includes('contact');
       const dob = formData.dob;
       const nationality = formData.nationality;
       
@@ -1592,9 +1592,9 @@ function updatePreview() {
       }
       
       if (dobNationalityDiv) {
-          if (isContactInRight && (dob || nationality)) {
+          if (isContactInLeft && (dob || nationality)) {
               dobNationalityDiv.innerHTML = `
-                  <div style="text-align: center; margin: 15px 0; font-size: calc(var(--font-size, 11px)); 
+                  <div style="text-align: center; margin: 15px 0 20px 0; font-size: calc(var(--font-size, 11px)); 
                               color: rgba(255,255,255,0.9); line-height: 1.4;">
                       ${dob && nationality ? `${dob} | ${nationality}` : (dob || nationality)}
                   </div>
@@ -1790,23 +1790,23 @@ function generateContactHTML() {
     
     // ✅ When first in right column - show in header with DOB and Nationality in second row
     if (isFirstInRight) {
-        return `
-            <div style="margin-top: 8px; font-size: 12px; line-height: 1.4;">
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
-                    ${phone ? `<span><i class="fas fa-phone"></i> ${phone}</span>` : ''}
-                    ${email ? `<span><i class="fas fa-envelope"></i> ${email}</span>` : ''}
-                    ${location ? `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>` : ''}
-                </div>
-                ${(dob || nationality) ? `
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
-                    ${dob ? `<span><i class="fas fa-birthday-cake"></i> ${dob}</span>` : ''}
-                    ${nationality ? `<span><i class="fas fa-flag"></i> ${nationality}</span>` : ''}
-                    ${linkedin ? `<span><i class="fab fa-linkedin"></i> ${linkedin}</span>` : ''}
-                </div>
-                ` : (linkedin ? `<div><i class="fab fa-linkedin"></i> ${linkedin}</div>` : '')}
-            </div>
-        `;
-    } 
+       return `
+           <div style="margin-top: 8px; font-size: 12px; line-height: 1.4;">
+               <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 5px;">
+                   ${phone ? `<span><i class="fas fa-phone"></i> ${phone}</span>` : ''}
+                   ${email ? `<span><i class="fas fa-envelope"></i> ${email}</span>` : ''}
+                   ${location ? `<span><i class="fas fa-map-marker-alt"></i> ${location}</span>` : ''}
+               </div>
+               ${(dob || nationality || linkedin) ? `
+               <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                   ${dob ? `<span><i class="fas fa-birthday-cake"></i> ${dob}</span>` : ''}
+                   ${nationality ? `<span><i class="fas fa-flag"></i> ${nationality}</span>` : ''}
+                   ${linkedin ? `<span><i class="fab fa-linkedin"></i> ${linkedin}</span>` : ''}
+               </div>
+               ` : ''}
+           </div>
+       `;
+   }
     
     // ✅ When in right column but NOT first - show as regular section in content box
     return `
@@ -2787,6 +2787,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
