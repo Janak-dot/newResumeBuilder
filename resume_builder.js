@@ -184,9 +184,9 @@ function collectAllData() {
 function restoreAllData(data) {
     if (!data) return;
     if (data.profilePicPlacement) {
-         ProfilePicManager.placement = data.profilePicPlacement;
-     }
-     ProfilePicManager.updateStatus();
+        ProfilePicManager.placement = data.profilePicPlacement;
+    }
+    ProfilePicManager.updateStatus();
     
     if (data.formData) {
         formData = { ...formData, ...data.formData };
@@ -379,7 +379,7 @@ function openFormPanel(section) {
     restoreFormValues(section);
     if (section === 'personal') {
     setTimeout(() => ProfilePicManager.updateStatus(), 50);
-}
+    }
     if (section === 'skills') renderSkills();
     if (section === 'languages') renderLanguages();
     if (section === 'experience') renderExperiences();
@@ -446,30 +446,33 @@ function getFormContent(section) {
             `;
             
         case 'personal':
-    return `
-        <div class="form-group">
-            <label>Profile Picture:</label>
-            <input type="file" id="profilePic" accept="image/*" onchange="loadProfilePic()">
-        </div>
-        <div class="form-group" style="display: flex; gap: 10px; align-items: center;">
-            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveLeft()" 
-                    style="flex: 1;" title="Move profile picture to left column">
-                <i class="fas fa-arrow-left"></i>
-                <span>Move Left</span>
-            </button>
-            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveRight()" 
-                    style="flex: 1;" title="Move profile picture to right header">
-                <i class="fas fa-arrow-right"></i>
-                <span>Move Right</span>
-            </button>
-            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.remove()" 
-                    style="flex: 1; border-color: #dc3545;" title="Remove profile picture">
-                <i class="fas fa-trash" style="color: #dc3545;"></i>
-                <span style="color: #dc3545;">Remove</span>
-            </button>
-        </div>
-        <div id="profilePicStatus" style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
-            <!-- Status will be shown here -->
+             return `
+                 <div class="form-group">
+                     <label>Profile Picture:</label>
+                     <input type="file" id="profilePic" accept="image/*" onchange="loadProfilePic()">
+                 </div>
+                 <div class="form-group" style="display: flex; gap: 10px; align-items: center;">
+                     <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveLeft()" 
+                             style="flex: 1;" title="Move profile picture to left column">
+                         <i class="fas fa-arrow-left"></i>
+                         <span>Move Left</span>
+                     </button>
+                     <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveRight()" 
+                             style="flex: 1;" title="Move profile picture to right header">
+                         <i class="fas fa-arrow-right"></i>
+                         <span>Move Right</span>
+                     </button>
+                     <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.remove()" 
+                             style="flex: 1; border-color: #dc3545;" title="Remove profile picture">
+                         <i class="fas fa-trash" style="color: #dc3545;"></i>
+                         <span style="color: #dc3545;">Remove</span>
+                     </button>
+                 </div>
+                 <div id="profilePicStatus" style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
+                     <!-- Status will be shown here -->
+                 </div>
+                 <!-- Rest of personal form fields... -->
+             `;
         </div>
         <div class="form-row">
             <div class="form-group">
@@ -1649,13 +1652,14 @@ function updatePreview() {
    const picDiv = document.getElementById('previewProfilePic');
    if (picDiv) {
        // Handle left column placement
-       if (ProfilePicManager.placement === 'left' && profilePicData) {
+       if (ProfilePicManager.placement === 'left') {
            picDiv.style.display = 'flex';
-           picDiv.innerHTML = `<img src="${profilePicData}" alt="Profile">`;
-       } else if (ProfilePicManager.placement === 'left' && !profilePicData) {
-           picDiv.style.display = 'flex';
-           const initials = (formData.firstName ? formData.firstName[0] : '') + (formData.lastName ? formData.lastName[0] : '');
-           picDiv.textContent = initials || '👤';
+           if (profilePicData) {
+               picDiv.innerHTML = `<img src="${profilePicData}" alt="Profile">`;
+           } else {
+               const initials = (formData.firstName ? formData.firstName[0] : '') + (formData.lastName ? formData.lastName[0] : '');
+               picDiv.textContent = initials || '👤';
+           }
        } else {
            // Hide in left column if placement is 'right' or 'none'
            picDiv.style.display = 'none';
@@ -2895,6 +2899,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
