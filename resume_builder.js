@@ -1674,13 +1674,14 @@ function updatePreview() {
                rightPicDiv = document.createElement('div');
                rightPicDiv.id = 'rightProfilePic';
                rightPicDiv.style.cssText = `
-                   width: 120px;
-                   height: 120px;
-                   border-radius: 50%;
-                   overflow: hidden;
-                   border: 3px solid var(--main-color, #008c8c);
-                   margin-bottom: 10px;
-                   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                     width: 150px;
+                     height: 150px;
+                     border-radius: 50%;
+                     overflow: hidden;
+                     border: 4px solid var(--main-color, #008c8c);
+                     margin-bottom: 15px;
+                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                     flex-shrink: 0;
                `;
                rightHeader.insertBefore(rightPicDiv, rightHeader.firstChild);
            }
@@ -2899,6 +2900,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
