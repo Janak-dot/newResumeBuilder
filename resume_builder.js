@@ -471,65 +471,63 @@ function getFormContent(section) {
                  <div id="profilePicStatus" style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
                      <!-- Status will be shown here -->
                  </div>
-                 <!-- Rest of personal form fields... -->
+                 
+                 <div class="form-row">
+                     <div class="form-group">
+                         <label>First & Middle Name:</label>
+                         <input type="text" id="firstName" placeholder="John" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                     <div class="form-group">
+                         <label>Last Name:</label>
+                         <input type="text" id="lastName" placeholder="Doe" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                 </div>
+                 <div class="form-group">
+                     <label>Job Title:</label>
+                     <input type="text" id="jobTitle" placeholder="Software Engineer" onchange="updatePreview(); saveToLocalStorage();">
+                 </div>
+                 
+                 <div class="form-row">
+                     <div class="form-group">
+                         <label>Date of Birth:</label>
+                         <input type="text" id="dob" placeholder="e.g., 15 March 1990" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                     <div class="form-group">
+                         <label>Nationality:</label>
+                         <input type="text" id="nationality" placeholder="e.g., Finnish" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                 </div>
+                 
+                 <h4 style="margin: 20px 0 10px; color: #2b579a;">Contact Information</h4>
+                 
+                 ${generateHeadingSelector('contact', formData.contactHeading)}
+                 
+                 <div class="placement-control">
+                     <button id="contactToggle" class="toggle-btn" onclick="ResumeManager.toggleSectionPlacement('contact')" title="Move left/right">⇄</button>
+                     <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'up')" title="Move up">↑</button>
+                     <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'down')" title="Move down">↓</button>
+                 </div>
+                 <div class="form-row">
+                     <div class="form-group">
+                         <label>Phone:</label>
+                         <input type="tel" id="phone" placeholder="+1 234 567 8900" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                     <div class="form-group">
+                         <label>Email:</label>
+                         <input type="email" id="email" placeholder="john@example.com" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                 </div>
+                 <div class="form-row">
+                     <div class="form-group">
+                         <label>LinkedIn:</label>
+                         <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                     <div class="form-group">
+                         <label>Location:</label>
+                         <input type="text" id="location" placeholder="New York, USA" onchange="updatePreview(); saveToLocalStorage();">
+                     </div>
+                 </div>
              `;
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>First & Middle Name:</label>
-                <input type="text" id="firstName" placeholder="John" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-            <div class="form-group">
-                <label>Last Name:</label>
-                <input type="text" id="lastName" placeholder="Doe" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Job Title:</label>
-            <input type="text" id="jobTitle" placeholder="Software Engineer" onchange="updatePreview(); saveToLocalStorage();">
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label>Date of Birth:</label>
-                <input type="text" id="dob" placeholder="e.g., 15 March 1990" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-            <div class="form-group">
-                <label>Nationality:</label>
-                <input type="text" id="nationality" placeholder="e.g., Finnish" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-        </div>
-        
-        <h4 style="margin: 20px 0 10px; color: #2b579a;">Contact Information</h4>
-        
-        ${generateHeadingSelector('contact', formData.contactHeading)}
-        
-        <div class="placement-control">
-            <button id="contactToggle" class="toggle-btn" onclick="ResumeManager.toggleSectionPlacement('contact')" title="Move left/right">⇄</button>
-            <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'up')" title="Move up">↑</button>
-            <button class="order-btn" onclick="ResumeManager.reorderSection('contact', 'down')" title="Move down">↓</button>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Phone:</label>
-                <input type="tel" id="phone" placeholder="+1 234 567 8900" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="email" placeholder="john@example.com" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label>LinkedIn:</label>
-                <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-            <div class="form-group">
-                <label>Location:</label>
-                <input type="text" id="location" placeholder="New York, USA" onchange="updatePreview(); saveToLocalStorage();">
-            </div>
-        </div>
-    `;
         case 'about':
             return `
                 <div class="form-group">
@@ -2900,6 +2898,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
