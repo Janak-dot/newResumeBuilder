@@ -169,6 +169,7 @@ function collectAllData() {
         formData,
         coverLetterBody,
         profilePicData,
+        profilePicPlacement: ProfilePicManager.placement,
         skills,
         languages,
         experiences,
@@ -182,6 +183,10 @@ function collectAllData() {
 
 function restoreAllData(data) {
     if (!data) return;
+    if (data.profilePicPlacement) {
+         ProfilePicManager.placement = data.profilePicPlacement;
+     }
+     ProfilePicManager.updateStatus();
     
     if (data.formData) {
         formData = { ...formData, ...data.formData };
@@ -372,7 +377,9 @@ function openFormPanel(section) {
 
     content.innerHTML = getFormContent(section);
     restoreFormValues(section);
-
+    if (section === 'personal') {
+    setTimeout(() => ProfilePicManager.updateStatus(), 50);
+}
     if (section === 'skills') renderSkills();
     if (section === 'languages') renderLanguages();
     if (section === 'experience') renderExperiences();
@@ -443,6 +450,26 @@ function getFormContent(section) {
         <div class="form-group">
             <label>Profile Picture:</label>
             <input type="file" id="profilePic" accept="image/*" onchange="loadProfilePic()">
+        </div>
+        <div class="form-group" style="display: flex; gap: 10px; align-items: center;">
+            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveLeft()" 
+                    style="flex: 1;" title="Move profile picture to left column">
+                <i class="fas fa-arrow-left"></i>
+                <span>Move Left</span>
+            </button>
+            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.moveRight()" 
+                    style="flex: 1;" title="Move profile picture to right header">
+                <i class="fas fa-arrow-right"></i>
+                <span>Move Right</span>
+            </button>
+            <button type="button" class="ribbon-btn small" onclick="ProfilePicManager.remove()" 
+                    style="flex: 1; border-color: #dc3545;" title="Remove profile picture">
+                <i class="fas fa-trash" style="color: #dc3545;"></i>
+                <span style="color: #dc3545;">Remove</span>
+            </button>
+        </div>
+        <div id="profilePicStatus" style="font-size: 12px; color: #666; margin-top: 5px; text-align: center;">
+            <!-- Status will be shown here -->
         </div>
         <div class="form-row">
             <div class="form-group">
@@ -1524,6 +1551,56 @@ function updateAllToggleButtons() {
         ResumeManager.updateToggleButton(customKey, side);
     });
 }
+// ==================== PROFILE PICTURE MANAGER ====================
+const ProfilePicManager = {
+    placement: 'left', // 'left', 'right', or 'none'
+    
+    moveLeft() {
+        this.placement = 'left';
+        this.updateStatus();
+        updatePreview();
+        saveToLocalStorage();
+    },
+    
+    moveRight() {
+        this.placement = 'right';
+        this.updateStatus();
+        updatePreview();
+        saveToLocalStorage();
+    },
+    
+    remove() {
+        if (!profilePicData) {
+            alert('No profile picture to remove');
+            return;
+        }
+        if (confirm('Remove profile picture? You can add it back by uploading a new one.')) {
+            profilePicData = null;
+            const input = document.getElementById('profilePic');
+            if (input) input.value = '';
+            this.updateStatus();
+            updatePreview();
+            saveToLocalStorage();
+        }
+    },
+    
+    updateStatus() {
+        const statusDiv = document.getElementById('profilePicStatus');
+        if (!statusDiv) return;
+        
+        if (!profilePicData) {
+            statusDiv.innerHTML = '<i class="fas fa-info-circle"></i> No profile picture uploaded';
+            statusDiv.style.color = '#666';
+        } else {
+            const placements = {
+                'left': '<i class="fas fa-check-circle" style="color: #28a745;"></i> Picture in left column',
+                'right': '<i class="fas fa-check-circle" style="color: #28a745;"></i> Picture in right header',
+                'none': '<i class="fas fa-eye-slash"></i> Picture hidden'
+            };
+            statusDiv.innerHTML = placements[this.placement] || '';
+        }
+    }
+};
 
 // ==================== PREVIEW UPDATE ====================
 function updatePreview() {
@@ -1569,15 +1646,46 @@ function updatePreview() {
     if (lnEl) lnEl.textContent = formData.lastName;
     if (jtEl) jtEl.textContent = formData.jobTitle;
 
-    const picDiv = document.getElementById('previewProfilePic');
-    if (picDiv) {
-        if (profilePicData) {
-            picDiv.innerHTML = `<img src="${profilePicData}" alt="Profile">`;
-        } else {
-            const initials = (formData.firstName ? formData.firstName[0] : '') + (formData.lastName ? formData.lastName[0] : '');
-            picDiv.textContent = initials || '👤';
-        }
-    }
+   const picDiv = document.getElementById('previewProfilePic');
+   if (picDiv) {
+       // Handle left column placement
+       if (ProfilePicManager.placement === 'left' && profilePicData) {
+           picDiv.style.display = 'flex';
+           picDiv.innerHTML = `<img src="${profilePicData}" alt="Profile">`;
+       } else if (ProfilePicManager.placement === 'left' && !profilePicData) {
+           picDiv.style.display = 'flex';
+           const initials = (formData.firstName ? formData.firstName[0] : '') + (formData.lastName ? formData.lastName[0] : '');
+           picDiv.textContent = initials || '👤';
+       } else {
+           // Hide in left column if placement is 'right' or 'none'
+           picDiv.style.display = 'none';
+       }
+       
+       // Handle right header placement
+       const rightHeader = document.querySelector('.right-header');
+       let rightPicDiv = document.getElementById('rightProfilePic');
+       
+       if (ProfilePicManager.placement === 'right' && profilePicData && rightHeader) {
+           if (!rightPicDiv) {
+               rightPicDiv = document.createElement('div');
+               rightPicDiv.id = 'rightProfilePic';
+               rightPicDiv.style.cssText = `
+                   width: 120px;
+                   height: 120px;
+                   border-radius: 50%;
+                   overflow: hidden;
+                   border: 3px solid var(--main-color, #008c8c);
+                   margin-bottom: 10px;
+                   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+               `;
+               rightHeader.insertBefore(rightPicDiv, rightHeader.firstChild);
+           }
+           rightPicDiv.innerHTML = `<img src="${profilePicData}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+           rightPicDiv.style.display = 'block';
+       } else if (rightPicDiv) {
+           rightPicDiv.style.display = 'none';
+       }
+   }
    
     // ✅Show DOB/Nationality below profile pic when contact is in right column
       const isContactInLeft = sectionOrder.left.includes('contact');
@@ -2787,6 +2895,7 @@ function getDocumentFileName() {
     const prefix = type === "coverletter" || type === "cover_letter" ? "Cover letter" : "Resume";
     return `${prefix}_${fullName || "Unnamed"}${job ? "_" + job : ""}`.replace(/\s+/g, " ").trim();
 }
+
 
 
 
